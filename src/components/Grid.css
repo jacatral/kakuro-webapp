@@ -1,0 +1,71 @@
+:root {
+    --cell-size: 50px;
+    --cell-margin: 5px;
+}
+
+/* Grid structure */
+.grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.gridRow {
+    display: flex;
+}
+
+.gridCell {
+    min-width: var(--cell-size);
+    min-height: var(--cell-size);
+    border: 1px solid black;
+}
+
+/* Filled-Cell */
+.filledCell {
+    position: relative;
+    background-color: black;
+}
+.filledCell:has(span) {
+    background-color: white;
+}
+
+/* Filled-Cell Filling */
+.filledCell .sumDivider {
+    border-bottom: 1px solid black;
+    width: 141.4%;
+    transform: rotate(45deg);
+    transform-origin: top left;
+}
+.filledCell .rightFill {
+    margin-top: -1px;
+    border-top: calc(var(--cell-size) / 2) solid black;
+    border-right: calc(var(--cell-size) / 2) solid black;
+    border-bottom: calc(var(--cell-size) / 2) solid transparent;
+    border-left: calc(var(--cell-size) / 2) solid transparent;
+}
+.filledCell .downFill {
+    margin-top: -1px;
+    border-top: calc(var(--cell-size) / 2) solid transparent;
+    border-right: calc(var(--cell-size) / 2) solid transparent;
+    border-bottom: calc(var(--cell-size) / 2) solid black;
+    border-left: calc(var(--cell-size) / 2) solid black;
+}
+
+/* Filled-Cell Clue Numbers */
+.filledCell span {
+    position: absolute;
+}
+.filledCell .downSum {
+    bottom: var(--cell-margin);
+    left: var(--cell-margin);
+}
+.filledCell .rightSum {
+    top: var(--cell-margin);
+    right: var(--cell-margin);
+}
+
+/* Blank-Cell Input */
+.gridCell input {
+    width: calc(var(--cell-size) - 8px);
+    height: calc(var(--cell-size) - 6px);
+    text-align: center;
+}
