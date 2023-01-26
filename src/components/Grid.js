@@ -9,6 +9,7 @@ class Grid extends React.Component {
     /**
      * @description Display 2-D map of the Kakuro puzzle
      * @param {Array<Array>} cells
+     * @param {Function} updateCellValue
      */
     constructor(props) {
         super(props);
@@ -25,7 +26,7 @@ class Grid extends React.Component {
                                     if (Array.isArray(cell)) {
                                         return <FilledCell downSum={cell[0]} rightSum={cell[1]} x={x} y={y} />
                                     }
-                                    return <BlankCell x={x} y={y} />
+                                    return <BlankCell x={x} y={y} updateCellValue={this.props.updateCellValue} />
                                 })
                             }
                         </div>
