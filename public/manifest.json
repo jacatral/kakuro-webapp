@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Kakuro App",
+  "name": "Web site that runs the logic puzzle Kakuro",
   "icons": [
     {
       "src": "favicon.ico",
