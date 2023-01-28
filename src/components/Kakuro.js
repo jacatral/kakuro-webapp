@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 
 import Grid from './Grid.js';
 import KakuroSum from '../common/kakuroSum.js';
 
 import { BLANK_CELL } from '../common/constants.js';
+
+const defaultPuzzle = 'basic1';
+const presetPuzzles = [
+    defaultPuzzle,
+    'basic2',
+];
 
 function generateBlankCell() {
     return new Array(2);
@@ -12,92 +19,17 @@ function generateBlankCell() {
 class Kakuro extends React.Component {
     /**
      * @description Controller for kakuro game
-     * @param {String} gridData
+     * @param {Array<Array>} cells Map of cells for the puzzle
+     * @param {Array<Object>} downSums List of column hints to solve
+     * @param {Array<Object>} rightSums List of row hints to solve
      */
     constructor(props) {
         super(props);
-        const { cells, downSums, rightSums } = this.parseGridData(props.gridData);
-        this.state = { cells, downSums, rightSums };
-    }
-
-    /**
-     * @description retrieve the sum for the column/row of a given cell
-     * @param {Array<String>} data
-     * @returns {Object}
-     * {
-     *   downSum: 0,
-     *   rightSum: 0
-     * }
-     */
-    parseFilledCellData(data = []) {
-        return {
-            downSum: Number.parseInt(data[0]) || 0,
-            rightSum: Number.parseInt(data[1]) || 0,
+        this.state = {
+            cells: props.cells,
+            downSums: props.downSums,
+            rightSums: props.rightSums,
         };
-    }
-
-    /**
-     * @description Convert grid-data string representation to a 2-D array (y, x dimensions)
-     * @param {String} gridData
-     * -,-,-,-,-
-     * -,5/7,,,
-     * -,,-,-,-
-     * -,,-,-,-
-     * -,,-,-,-
-     * @returns {Object}
-     * {
-     * [
-     *   cells: [
-     *      [[,], [,], [,], [,], [,]],
-     *      [[,], [5,7], '', '', ''],
-     *      [[,], '', [,], [,], [,]],
-     *      [[,], '', [,], [,], [,]],
-     *      [[,], '', [,], [,], [,]]
-     *   ],
-     *   downSums: [ { x: 1, y: 1, sum: 5 }, ... ],
-     *   rightSums: [ { x: 1, y: 1, sum: 7 }, ... ],
-     * }
-     */
-    parseGridData(gridData = '') {
-        const rows = gridData.split('\n');
-        const y = rows.length;
-        const x = rows.reduce((maxLength, rowData) => {
-            const columns = rowData.split(',');
-            return Math.max(maxLength, columns.length);
-        }, 1);
-
-        const cells = [], downSums = [], rightSums = [];
-        for (const [y, rowData] of rows.entries()) {
-            const row = rowData
-                .split(',');
-            const gridData = [];
-            row.forEach((str, x) => {
-                let columnData = str;
-                const components = str.split('/');
-                if (components.length > 1) {
-                    const { downSum, rightSum } = this.parseFilledCellData(components);
-                    columnData = components;
-
-                    if (downSum > 0) {
-                        downSums.push({ x, y, sum: downSum });
-                    }
-                    if (rightSum > 0) {
-                        rightSums.push({ x, y, sum: rightSum });
-                    }
-                }
-                if (str === BLANK_CELL) {
-                    columnData = generateBlankCell();
-                }
-                gridData.push(columnData);
-            });
-            while (gridData.length < x) {
-                gridData.push(generateBlankCell());
-            }
-            cells.push(gridData);
-        }
-        return {
-            cells, downSums, rightSums
-        }
     }
 
     /**
@@ -134,7 +66,6 @@ class Kakuro extends React.Component {
             const { sum, digits } = this.retrieveRowSumData(x, y);
             const kakuroSum = new KakuroSum(sum, digits);
             const statusCode = kakuroSum.validate();
-            console.log(x, y, sum, digits, statusCode);
             if (statusCode !== KakuroSum.StatusCodes.VALID) {
                 invalidRightSums.push({ x, y, statusCode });
             }
@@ -224,7 +155,6 @@ class Kakuro extends React.Component {
             }
         }
 
-        console.log(row);
         // Check for digits in the columns after the input cell
         while (dx < row.length && !Array.isArray(row[dx])) {
             cellValues.push(row[dx]);
@@ -247,4 +177,104 @@ class Kakuro extends React.Component {
     }
 }
 
-export default Kakuro;
+/**
+ * @description Generate grid-data from seed, for keywords it is a file to read
+ * @param {String} seed
+ * @returns {String}
+ */
+function fetchGridData(seed = defaultPuzzle) {
+    if (presetPuzzles.includes(seed)) {
+        return require(`../data/${seed}.js`).default;
+    }
+    return '';
+}
+
+/**
+ * @description Retrieve the sum for the column/row of a given cell
+ * @param {Array<String>} data
+ * @returns {Object}
+ * {
+ *   downSum: 0,
+ *   rightSum: 0
+ * }
+ */
+function parseFilledCellData(data = []) {
+    return {
+        downSum: Number.parseInt(data[0]) || 0,
+        rightSum: Number.parseInt(data[1]) || 0,
+    };
+}
+
+/**
+ * @description Convert grid-data string representation to a 2-D array (y, x dimensions)
+ * @param {String} gridData
+ * -,-,-,-,-
+ * -,5/7,,,
+ * -,,-,-,-
+ * -,,-,-,-
+ * -,,-,-,-
+ * @returns {Object}
+ * {
+ * [
+ *   cells: [
+ *      [[,], [,], [,], [,], [,]],
+ *      [[,], [5,7], '', '', ''],
+ *      [[,], '', [,], [,], [,]],
+ *      [[,], '', [,], [,], [,]],
+ *      [[,], '', [,], [,], [,]]
+ *   ],
+ *   downSums: [ { x: 1, y: 1, sum: 5 }, ... ],
+ *   rightSums: [ { x: 1, y: 1, sum: 7 }, ... ],
+ * }
+ */
+function parseGridData(gridData = '') {
+    const rows = gridData.split('\n');
+    const maxX = rows.reduce((maxLength, rowData) => {
+        const columns = rowData.split(',');
+        return Math.max(maxLength, columns.length);
+    }, 1);
+
+    const cells = [], downSums = [], rightSums = [];
+    console.log();
+    for (const [y, rowData] of rows.entries()) {
+        const row = rowData
+            .split(',');
+        const gridData = [];
+        row.forEach((str, x) => {
+            let columnData = str;
+            const components = str.split('/');
+            if (components.length > 1) {
+                const { downSum, rightSum } = parseFilledCellData(components);
+                columnData = components;
+
+                if (downSum > 0) {
+                    downSums.push({ x, y, sum: downSum });
+                }
+                if (rightSum > 0) {
+                    rightSums.push({ x, y, sum: rightSum });
+                }
+            }
+            if (str === BLANK_CELL) {
+                columnData = generateBlankCell();
+            }
+            gridData.push(columnData);
+        });
+        while (gridData.length < maxX) {
+            gridData.push(generateBlankCell());
+        }
+        cells.push(gridData);
+    }
+    return {
+        cells, downSums, rightSums
+    }
+}
+
+export default (props) => {
+    const params = useParams();
+    const seed = params && params.puzzleSeed;
+    const gridData = fetchGridData(seed);
+    const { cells, downSums, rightSums } = parseGridData(gridData);
+    return (
+        <Kakuro {...props} params={params} key={seed} cells={cells} downSums={downSums} rightSums={rightSums} />
+    )
+};
