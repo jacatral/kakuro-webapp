@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 
 import Home from './components/Home.js'
-import Kakuro from './components/Kakuro.js';
+import KakuroController from './components/KakuroController.js';
 
 function App() {
     return (
@@ -16,7 +16,7 @@ function App() {
             </div>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/puzzle/:puzzleSeed" element={<Kakuro key={window.location.pathname} />}/>
+                <Route path="/puzzle/:puzzleSeed" element={<KakuroController key={window.location.pathname} />}/>
             </Routes>
         </BrowserRouter>
     );
