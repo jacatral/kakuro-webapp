@@ -1,20 +1,14 @@
 
+import Grid from './grid.js';
 import { BLANK_CELL } from '../../common/constants.js';
 
-class PresetGrid {
+class PresetGrid extends Grid {
     /**
      * @param {String} fileName
      */
     constructor(fileName) {
+        super();
         this._name = fileName;
-    }
-
-    /**
-     * @description Provide empty array representation for border cells in grid
-     * @returns {Array}
-     */
-    generateBlankCell() {
-        return new Array(2);
     }
 
     /**
@@ -70,12 +64,12 @@ class PresetGrid {
                     columnData = components;
                 }
                 if (str === BLANK_CELL) {
-                    columnData = this.generateBlankCell();
+                    columnData = super.generateBlankCell();
                 }
                 gridData.push(columnData);
             });
             while (gridData.length < maxX) {
-                gridData.push(this.generateBlankCell());
+                gridData.push(super.generateBlankCell());
             }
             cells.push(gridData);
         }

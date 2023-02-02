@@ -1,4 +1,4 @@
-const numDigits = 9;
+import { NUM_DIGITS } from '../../common/constants.js';
 
 class KakuroSum {
     /**
@@ -36,8 +36,8 @@ class KakuroSum {
         // Determine the index for existing digits
         const indexMap = {};
         for (const [idx, num] of this._digits.entries()) {
-            if (num < 1 || num > numDigits) {
-                console.debug(`Number, ${num}, out of range 1-${numDigits}`);
+            if (num < 1 || num > NUM_DIGITS) {
+                console.debug(`Number, ${num}, out of range 1-${NUM_DIGITS}`);
                 return false;
             }
             if (Number.isInteger(indexMap[num])) {
