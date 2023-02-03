@@ -1,5 +1,6 @@
-import { NUM_DIGITS } from '../../common/constants.js';
+import { BLANK_CELL, NUM_DIGITS } from '../../common/constants.js';
 import Grid from './grid.js';
+import { v4 as uuid } from 'uuid';
 
 function deepCopy(input) {
     return JSON.parse(JSON.stringify(input));
@@ -14,6 +15,14 @@ class GeneratedGrid extends Grid {
         this._size = size;
         this.cells = [];
         this.solution = [];
+    }
+
+    /**
+     * @decription Verify that an input seed corresponds to a locally-stored grid
+     * @returns {Boolean}
+     */
+    checkSeed(key) {
+        return key in localStorage;
     }
 
     /**
@@ -38,10 +47,23 @@ class GeneratedGrid extends Grid {
     }
 
     /**
+     * @description Retrieve cells from locally-stored grid data, or generate a new one
+     * @returns {Array<Array>}
+     */
+    getCells(seed) {
+        if (this.checkSeed(seed)) {
+            const gridData = localStorage.getItem(seed);
+            this.cells = super.parseGridData(gridData);
+            return this.cells;
+        }
+        return this.generateGrid();
+    }
+
+    /**
      * @description Create 2-D array, with randomly generated down/right sum numbers
      * @returns {Array<Array>}
      */
-    getCells() {
+    generateGrid() {
         this.generateSolution();
         this.generateHints();
         this.solution = deepCopy(this.cells);
@@ -224,7 +246,65 @@ class GeneratedGrid extends Grid {
                 this.cells[y][x] = '';
             }
         }
+    }
 
+    /**
+     * @description Convert 2-D array into string representation
+     * @returns {String}
+     */
+    stringify() {
+        return this.cells
+            .map((row) => {
+                return row
+                    .map((cell) => {
+                        if (super.isFilledCell(cell)) {
+                            if (cell[0] && cell[1]) {
+                                return cell.join('/');
+                            } else if (cell[0] && !cell[1]) {
+                                return `${cell[0]}/`;
+                            } else if (!cell[0] && cell[1]) {
+                                return `/${cell[1]}`;
+                            }
+                            return BLANK_CELL;
+                        }
+                        return cell;
+                    })
+                    .join(',');
+            })
+            .join('\n');
+    }
+
+    /**
+     * @description Check if the grid is stored in local-storage (check for existing key)
+     *              before generating a new key to store it under
+     * @param {String} gridData
+     * @returns {String}
+     */
+    generateKey(gridData) {
+        // Check local storage if the grid was already saved
+        const savedGrids = Object.entries(localStorage);
+        for (const [key, value] of savedGrids) {
+            console.log(gridData, key, value)
+            if (gridData === value) {
+                console.log('Found grid-data in storage under id:', key);
+                return key;
+            }
+        }
+
+        // Assign an id for a new grid & store locally
+        const newKey = uuid().split('-')[0];
+        localStorage.setItem(newKey, gridData);
+        return newKey;
+    }
+
+    /**
+     * @description Generate a unique ID to regenerate a given arrangement
+     * @returns {String}
+     */
+    getSeed() {
+        const gridData = this.stringify();
+        const seed = this.generateKey(gridData);
+        return seed;
     }
 }
 

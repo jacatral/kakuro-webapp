@@ -73,26 +73,33 @@ class KakuroController extends React.Component {
 function fetchGridData(seed = defaultPuzzle) {
     if (presetPuzzles.includes(seed)) {
         const presetGrid = new PresetGrid(seed);
-        return presetGrid.getCells();
+        return {
+            seed: seed,
+            cells: presetGrid.getCells()
+        };
     }
+
+    // Default to a random 4x4 grid
+    let generatedGrid = new GeneratedGrid();
 
     // For random seed, generate grid with given size
     const generateRegex = new RegExp(/^random\d+/gi);
     if (seed.match(generateRegex)) {
         const size = Number.parseInt(seed.replace('random', ''));
-        const generatedGrid = new GeneratedGrid(size);
-        return generatedGrid.getCells();
+        generatedGrid = new GeneratedGrid(size);
     }
 
-    // Default to a random 4x4 grid
-    const generatedGrid = new GeneratedGrid();
-    return generatedGrid.getCells();
+    const grid = generatedGrid.getCells(seed);
+    return {
+        seed: generatedGrid.getSeed(),
+        cells: grid
+    };
 }
 
 export default (props) => {
     const params = useParams();
-    const seed = params && params.puzzleSeed;
-    const cells = fetchGridData(seed);
+    const puzzleSeed = params && params.puzzleSeed;
+    const { seed, cells } = fetchGridData(puzzleSeed);
     return (
         <KakuroController {...props} params={params} key={seed} cells={cells} />
     )
