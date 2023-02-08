@@ -74,10 +74,7 @@ function fetchGridData(props, seed = defaultPuzzle) {
     const { cache } = props;
     if (presetPuzzles.includes(seed)) {
         const presetGrid = new PresetGrid(seed);
-        return {
-            seed: seed,
-            cells: presetGrid.getCells()
-        };
+        return presetGrid.getCells();
     }
 
     // Retrieve grid from a given seed
