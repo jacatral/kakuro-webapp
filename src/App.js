@@ -1,19 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 
+import GeneratedGrid from './models/grids/generatedGrid.js';
+import GridCache from './models/gridCache.js';
 import Home from './components/Home.js'
 import KakuroController from './components/KakuroController.js';
 
-function App() {
-    const generatedGrids = Object.entries(localStorage).reduce((gridMap, [key, gridData]) => {
-        const rows = gridData.split('\n');
-        const sampleRow = rows[0].split(',');
-        const gridSize = sampleRow.length - 1;
+const sizes = [4, 8, 16];
+const PRESEED_COUNT = 3;
 
-        gridMap[gridSize] = gridMap[gridSize] || [];
-        gridMap[gridSize].push(key);
-        return gridMap;
-    }, {});
+function App() {
+    const cache = new GridCache(localStorage);
+
+    // Map grids by size, then prepopulate seeds in case there isn't enough seeds
+    const generatedGrids = GridCache.mapGridsBySize(localStorage);
+    for (const size of sizes) {
+        const seeds = generatedGrids[size] || [];
+        while (seeds.length < PRESEED_COUNT) {
+            const grid = new GeneratedGrid(cache, size);
+            grid.generateGrid();
+            const seed = grid.getSeed();
+            seeds.push(seed);
+        }
+    }
+
+    const [grids, setGrids] = useState(generatedGrids);
+
+    // Generate a new seed on the spot & redirect
+    const generatePuzzle = (size = 4) => {
+        const grid = new GeneratedGrid(cache, size);
+        grid.generateGrid();
+        const seed = grid.getSeed();
+        window.location.href = `/puzzle/${seed}`;
+    };
 
     return (
         <BrowserRouter>
@@ -22,19 +41,19 @@ function App() {
                     <li><Link to="/">Home</Link></li>
                     <li><Link to="/puzzle/basic1">Introductory Puzzle</Link></li>
                     <li><Link to="/puzzle/basic2">Easy 4x4 Puzzle</Link></li>
-                    <li><Link to="/puzzle/random4">Random 4x4 Puzzle</Link></li>
-                    <li><Link to="/puzzle/random8">Random 8x8 Puzzle</Link></li>
-                    <li><Link to="/puzzle/random16">Random 16x16 Puzzle</Link></li>
+                    <li><a onClick={() => generatePuzzle(4)}>Random 4x4 Puzzle</a></li>
+                    <li><a onClick={() => generatePuzzle(8)}>Random 8x8 Puzzle</a></li>
+                    <li><a onClick={() => generatePuzzle(16)}>Random 16x16 Puzzle</a></li>
                 </ul>
             </div>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/puzzle/:puzzleSeed" element={<KakuroController key={window.location.pathname} />}/>
+                <Route path="/puzzle/:puzzleSeed" element={<KakuroController key={window.location.pathname} cache={cache} />}/>
             </Routes>
             <div className="generated-grids">
                 <span>Randomly Generated Grids</span>
                 {
-                    Object.entries(generatedGrids).map(([size, seedList]) => {
+                    Object.entries(grids).map(([size, seedList]) => {
                         return (
                             <div>
                                 <span>{size}</span>

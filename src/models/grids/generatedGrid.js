@@ -10,19 +10,12 @@ class GeneratedGrid extends Grid {
     /**
      * @param {Number} size [4, 8, 16]
      */
-    constructor(size = 4) {
+    constructor(cache, size = 4) {
         super();
+        this._cache = cache;
         this._size = size;
         this.cells = [];
         this.solution = [];
-    }
-
-    /**
-     * @decription Verify that an input seed corresponds to a locally-stored grid
-     * @returns {Boolean}
-     */
-    checkSeed(key) {
-        return key in localStorage;
     }
 
     /**
@@ -51,11 +44,12 @@ class GeneratedGrid extends Grid {
      * @returns {Array<Array>}
      */
     getCells(seed) {
-        if (this.checkSeed(seed)) {
-            const gridData = localStorage.getItem(seed);
+        if (this._cache.contains(seed)) {
+            const gridData = this._cache.get(seed);
             this.cells = super.parseGridData(gridData);
             return this.cells;
         }
+        console.warn(`Seed, ${seed}, was not found; generating a random 4x4`);
         return this.generateGrid();
     }
 
@@ -282,18 +276,14 @@ class GeneratedGrid extends Grid {
      */
     generateKey(gridData) {
         // Check local storage if the grid was already saved
-        const savedGrids = Object.entries(localStorage);
-        for (const [key, value] of savedGrids) {
-            console.log(gridData, key, value)
-            if (gridData === value) {
-                console.log('Found grid-data in storage under id:', key);
-                return key;
-            }
+        const existingKey = this._cache.findKey(gridData);
+        if (existingKey) {
+            return this._cache.get(existingKey);
         }
 
         // Assign an id for a new grid & store locally
         const newKey = uuid().split('-')[0];
-        localStorage.setItem(newKey, gridData);
+        this._cache.set(newKey, gridData);
         return newKey;
     }
 

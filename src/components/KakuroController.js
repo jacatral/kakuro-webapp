@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import GeneratedGrid from '../models/grids/generatedGrid.js';
@@ -11,7 +11,6 @@ const presetPuzzles = [
     defaultPuzzle,
     'basic2',
 ];
-
 
 class KakuroController extends React.Component {
     /**
@@ -67,10 +66,12 @@ class KakuroController extends React.Component {
 
 /**
  * @description Generate grid-data from seed, for keywords it is a file to read
+ * @param {*} props
  * @param {String} seed
- * @returns {String}
+ * @returns {Object}
  */
-function fetchGridData(seed = defaultPuzzle) {
+function fetchGridData(props, seed = defaultPuzzle) {
+    const { cache } = props;
     if (presetPuzzles.includes(seed)) {
         const presetGrid = new PresetGrid(seed);
         return {
@@ -79,28 +80,18 @@ function fetchGridData(seed = defaultPuzzle) {
         };
     }
 
-    // Default to a random 4x4 grid
-    let generatedGrid = new GeneratedGrid();
-
-    // For random seed, generate grid with given size
-    const generateRegex = new RegExp(/^random\d+/gi);
-    if (seed.match(generateRegex)) {
-        const size = Number.parseInt(seed.replace('random', ''));
-        generatedGrid = new GeneratedGrid(size);
-    }
-
+    // Retrieve grid from a given seed
+    const generatedGrid = new GeneratedGrid(cache);
     const grid = generatedGrid.getCells(seed);
-    return {
-        seed: generatedGrid.getSeed(),
-        cells: grid
-    };
+    return grid;
 }
 
 export default (props) => {
     const params = useParams();
+
     const puzzleSeed = params && params.puzzleSeed;
-    const { seed, cells } = fetchGridData(puzzleSeed);
+    const cells = fetchGridData(props, puzzleSeed);
     return (
-        <KakuroController {...props} params={params} key={seed} cells={cells} />
+        <KakuroController {...props} params={params} key={puzzleSeed} cells={cells} />
     )
 };
