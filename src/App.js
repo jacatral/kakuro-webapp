@@ -1,3 +1,5 @@
+import './App.css';
+
 import React, { useState } from 'react';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 
@@ -37,14 +39,16 @@ function App() {
     return (
         <BrowserRouter>
             <div className="directory">
-                <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/puzzle/basic1">Introductory Puzzle</Link></li>
-                    <li><Link to="/puzzle/basic2">Easy 4x4 Puzzle</Link></li>
-                    <li><a onClick={() => generatePuzzle(4)}>Random 4x4 Puzzle</a></li>
-                    <li><a onClick={() => generatePuzzle(8)}>Random 8x8 Puzzle</a></li>
-                    <li><a onClick={() => generatePuzzle(16)}>Random 16x16 Puzzle</a></li>
-                </ul>
+                <div id="home"><Link to="/">Home</Link></div>
+                <div id="basic1"><Link to="/puzzle/basic1">Introductory Puzzle</Link></div>
+                <div id="basic2"><Link to="/puzzle/basic2">Easy 4x4 Puzzle</Link></div>
+                {
+                    sizes.map((size) => {
+                        return (
+                            <div id={`random${size}`}><a onClick={() => generatePuzzle(size)}>Random {size}x{size} Puzzle</a></div>
+                        )
+                    })
+                }
             </div>
             <Routes>
                 <Route path="/" element={<Home />} />

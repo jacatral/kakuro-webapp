@@ -1,0 +1,56 @@
+/* Directory */
+.directory {
+    display: flex;
+    flex-direction: row;
+    min-height: 75px;
+    min-width: 700px;
+}
+.directory div {
+    flex: 1;
+    position: relative;
+
+    margin: 0 2.5px;
+    border: 2px solid black;
+    border-top: 0;
+    border-radius: 0 0 15px 15px;
+
+    cursor: pointer;
+}
+.directory div a {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    color: black;
+    text-decoration: none;
+
+    font-size: 1.125em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.directory #home {
+    background-color: black;
+}
+.directory #home a {
+    color: white;
+}
+
+.directory #basic1 {
+    background-color: #89CFF0;
+}
+.directory #basic2 {
+    background-color: #6CB4EE;
+}
+
+.directory #random4 {
+    background-color: #3FFF00;
+}
+.directory #random8 {
+    background-color: #FFFF00;
+}
+.directory #random16 {
+    background-color: #FF7F50;
+}
