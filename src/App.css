@@ -1,9 +1,18 @@
+#root {
+    position: relative;
+    min-width: 700px;
+    height: 100vh;
+    overflow: hidden;
+}
+
 /* Directory */
 .directory {
     display: flex;
     flex-direction: row;
     min-height: 75px;
     min-width: 700px;
+
+    margin-bottom: 12.5px;
 }
 .directory div {
     flex: 1;
@@ -53,4 +62,117 @@
 }
 .directory #random16 {
     background-color: #FF7F50;
+}
+
+/* Seeds */
+.generated-grids {
+    position: absolute;
+    z-index: 10;
+    top: 100px;
+    right: -5%;
+    bottom: 0;
+
+    background-color: #e6e8fa;
+
+    border: 2px solid black;
+    border-right: 0;
+    border-radius: 15px 0 0 0;
+
+    transition: all 0.5s ease-in-out;
+}
+.generated-grids:hover {
+    right: 0;
+}
+.generated-grids .title {
+    margin: 4px;
+    font-size: 1.25em;
+}
+
+.generated-grids .subgroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.generated-grids .subtitle {
+    z-index: 5;
+    min-width: 100px;
+    border: 1px solid #2C2C2C;
+    border-right: 0;
+    border-left: 0;
+
+    padding: 4px;
+    padding-right: 6px;
+
+    background-color: #483d8b;
+    color: white;
+
+    display: flex;
+    font-size: 1.125em;
+    cursor: pointer;
+}
+.generated-grids span {
+    margin-right: auto;
+    margin-left: 5px;
+}
+.generated-grids .subtitle-arrow {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.generated-grids .arrow {
+    max-width: 0;
+    max-height: 0;
+    padding: 4px;
+}
+
+@keyframes slide-down {
+    0% {
+        z-index: 1;
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    100% {
+        z-index: 1;
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.generated-grids .seed {
+    z-index: 2;
+
+    border: 1px dashed #323441;
+    border-right: 0;
+    border-left: 0;
+
+    background-color: #e6e6fa;
+
+    animation: slide-down 0.5s ease-in-out;
+}
+.generated-grids .seed:nth-child(2n+1) {
+    background-color: #dcd0ff;
+}
+.generated-grids .seed a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+
+    color: black;
+    text-decoration: none;
+}
+
+/* Arrow entry */
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+}
+.arrow.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+.arrow.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }

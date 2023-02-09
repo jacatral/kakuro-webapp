@@ -27,6 +27,7 @@ function App() {
     }
 
     const [grids, setGrids] = useState(generatedGrids);
+    const [seedListSizes, setSeedListSizes] = useState([]);
 
     // Generate a new seed on the spot & redirect
     const generatePuzzle = (size = 4) => {
@@ -34,6 +35,20 @@ function App() {
         grid.generateGrid();
         const seed = grid.getSeed();
         window.location.href = `/puzzle/${seed}`;
+    };
+
+    // Toggle function to show/omit seeds by size
+    const toggleSeedListSize = (size) => {
+        const list = seedListSizes.slice();
+        const index = list.indexOf(size);
+        if (index === -1) {
+            // If entry does not exist, insert it
+            list.push(size);
+        } else {
+            // If entry exists, remove it
+            list.splice(index, 1);
+        }
+        setSeedListSizes(list);
     };
 
     return (
@@ -55,20 +70,22 @@ function App() {
                 <Route path="/puzzle/:puzzleSeed" element={<KakuroController key={window.location.pathname} cache={cache} />}/>
             </Routes>
             <div className="generated-grids">
-                <span>Randomly Generated Grids</span>
+                <span className="title">Grids</span>
                 {
                     Object.entries(grids).map(([size, seedList]) => {
+                        const showSeeds = seedListSizes.includes(size);
                         return (
-                            <div>
-                                <span>{size}</span>
-                                <ul>
-                                    {
-                                        seedList.map((seed) => {
-                                            const seedRoute = `/puzzle/${seed}`;
-                                            return <li><Link to={seedRoute}>{seed}</Link></li>
-                                        })
-                                    }
-                                </ul>
+                            <div className="subgroup">
+                                <div className="subtitle" onClick={() => toggleSeedListSize(size)}>
+                                    <span>{size} x {size}</span>
+                                    <div className="subtitle-arrow"><i className={showSeeds ? "arrow down" : "arrow right"}/> </div>
+                                </div>
+                                {
+                                    showSeeds && seedList.map((seed) => {
+                                        const seedRoute = `/puzzle/${seed}`;
+                                        return <div className="seed"><Link to={seedRoute}>{seed}</Link></div>
+                                    })
+                                }
                             </div>
                         );
                     })

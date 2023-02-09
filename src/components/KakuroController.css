@@ -1,0 +1,6 @@
+/* Kakero page */
+.kakuro .kakuro-controller {
+    max-width: calc(100% - 80px);
+    max-height: 85vh;
+    overflow: scroll;
+}

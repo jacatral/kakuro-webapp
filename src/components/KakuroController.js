@@ -1,3 +1,5 @@
+import './KakuroController.css';
+
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -56,8 +58,10 @@ class KakuroController extends React.Component {
 
     render() {
         return (
-            <div>
-                <Grid cells={this.state.cells} updateCellValue={this.updateCellValue.bind(this)} />
+            <div class="kakuro">
+                <div class="kakuro-controller">
+                    <Grid cells={this.state.cells} updateCellValue={this.updateCellValue.bind(this)} />
+                </div>
                 <input type="button" value="Check Solution" onClick={this.validateSolution.bind(this)}/>
             </div>
         );
