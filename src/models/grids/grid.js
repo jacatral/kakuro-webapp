@@ -16,7 +16,7 @@ class Grid {
      * @param {*} cell
      * @returns {Boolean}
      */
-    isFilledCell(cell) {
+    static isFilledCell(cell) {
         return Array.isArray(cell);
     }
 

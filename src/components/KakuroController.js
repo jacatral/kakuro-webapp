@@ -4,7 +4,8 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import GeneratedGrid from '../models/grids/generatedGrid.js';
-import Grid from './grid/Grid.js';
+import Grid from '../models/grids/grid.js';
+import GridComponent from './grid/Grid.js';
 import Kakuro from '../models/kakuro/kakuro.js';
 import PresetGrid from '../models/grids/presetGrid.js';
 
@@ -35,7 +36,7 @@ class KakuroController extends React.Component {
      * @param {Number} value
      */
     updateCellValue(x, y, value) {
-        if (Array.isArray(this.state.cells[y][x])) {
+        if (Grid.isFilledCell(this.state.cells[y][x])) {
             console.warn(`Cannot modify filled cell at x=${x}, y=${y}`);
             return;
         }
@@ -60,7 +61,7 @@ class KakuroController extends React.Component {
         return (
             <div class="kakuro">
                 <div class="kakuro-controller">
-                    <Grid cells={this.state.cells} updateCellValue={this.updateCellValue.bind(this)} />
+                    <GridComponent cells={this.state.cells} updateCellValue={this.updateCellValue.bind(this)} />
                 </div>
                 <input type="button" value="Check Solution" onClick={this.validateSolution.bind(this)}/>
             </div>

@@ -1,4 +1,5 @@
 
+import Grid from '../grids/grid.js';
 import KakuroSum from './kakuroSum.js';
 
 class Kakuro {
@@ -18,7 +19,7 @@ class Kakuro {
         for (const [y, row] of this._data.entries()) {
             const rowData = [];
             row.forEach((cell, x) => {
-                if (Array.isArray(cell)) {
+                if (Grid.isFilledCell(cell)) {
                     const { downSum, rightSum } = this.parseFilledCellData(cell);
                     if (downSum > 0) {
                         this.downSums.push({ x, y, sum: downSum });
@@ -85,7 +86,7 @@ class Kakuro {
         let sum, cellValues = [], dy = y;
         // If the current cell is a filled-cell, retrieve the sum
         // When retrieving digits, start on the next row
-        if (Array.isArray(cells[y][x])) {
+        if (Grid.isFilledCell(cells[y][x])) {
             const cellData = this.parseFilledCellData(cells[y][x]);
             sum = cellData.downSum;
             dy += 1;
@@ -94,7 +95,7 @@ class Kakuro {
             // While navigating up, add other digits to the list
             let cy = y - 1;
             while (cy >= 0 && !sum) {
-                if (Array.isArray(cells[cy][x])) {
+                if (Grid.isFilledCell(cells[cy][x])) {
                     const cellData = this.parseFilledCellData(cells[cy][x]);
                     sum = cellData.downSum;
                 } else {
@@ -105,7 +106,7 @@ class Kakuro {
         }
 
         // Check for digits in the rows after the input cell
-        while (dy < cells.length && !Array.isArray(cells[dy][x])) {
+        while (dy < cells.length && !Grid.isFilledCell(cells[dy][x])) {
             cellValues.push(cells[dy][x]);
             dy += 1;
         }
@@ -130,7 +131,7 @@ class Kakuro {
         let sum, cellValues = [], dx = x;
         // If the current cell is a filled-cell, retrieve the sum
         // When retrieving digits, start on the next row
-        if (Array.isArray(row[x])) {
+        if (Grid.isFilledCell(row[x])) {
             const cellData = this.parseFilledCellData(row[x]);
             sum = cellData.rightSum;
             dx += 1;
@@ -139,7 +140,7 @@ class Kakuro {
             // While navigating left, add other digits to the list
             let cx = x - 1;
             while (cx >= 0 && !sum) {
-                if (Array.isArray(row[cx])) {
+                if (Grid.isFilledCell(row[cx])) {
                     const cellData = this.parseFilledCellData(row[cx]);
                     sum = cellData.rightSum;
                 } else {
@@ -150,7 +151,7 @@ class Kakuro {
         }
 
         // Check for digits in the columns after the input cell
-        while (dx < row.length && !Array.isArray(row[dx])) {
+        while (dx < row.length && !Grid.isFilledCell(row[dx])) {
             cellValues.push(row[dx]);
             dx += 1;
         }

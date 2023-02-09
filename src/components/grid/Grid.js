@@ -4,8 +4,9 @@ import React from 'react';
 
 import BlankCell from './BlankCell.js';
 import FilledCell from './FilledCell.js';
+import Grid from '../../models/grids/grid.js';
 
-class Grid extends React.Component {
+class GridComponent extends React.Component {
     /**
      * @description Display 2-D map of the Kakuro puzzle
      * @param {Array<Array>} cells
@@ -23,7 +24,7 @@ class Grid extends React.Component {
                         <div className="gridRow">
                             {
                                 row.map((cell, x) => {
-                                    if (Array.isArray(cell)) {
+                                    if (Grid.isFilledCell(cell)) {
                                         return <FilledCell downSum={cell[0]} rightSum={cell[1]} x={x} y={y} />
                                     }
                                     return <BlankCell x={x} y={y} updateCellValue={this.props.updateCellValue} />
@@ -37,4 +38,4 @@ class Grid extends React.Component {
     }
 }
 
-export default Grid;
+export default GridComponent;

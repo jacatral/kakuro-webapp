@@ -152,14 +152,14 @@ class GeneratedGrid extends Grid {
         const column = this.cells.map((r) => r[x]);
         for (let i = y; i > 0; i -= 1) {
             const cell = column[i];
-            if (super.isFilledCell(cell)) {
+            if (Grid.isFilledCell(cell)) {
                 break;
             }
             digits.push(cell);
         }
         for (let i = y + 1; i <= this._size; i += 1) {
             const cell = column[i];
-            if (super.isFilledCell(cell)) {
+            if (Grid.isFilledCell(cell)) {
                 break;
             }
             if (cell) {
@@ -180,14 +180,14 @@ class GeneratedGrid extends Grid {
         const row = this.cells[y];
         for (let i = x; i > 0; i -= 1) {
             const cell = row[i];
-            if (super.isFilledCell(cell)) {
+            if (Grid.isFilledCell(cell)) {
                 break;
             }
             digits.push(cell);
         }
         for (let i = x + 1; i <= this._size; i += 1) {
             const cell = row[i];
-            if (super.isFilledCell(cell)) {
+            if (Grid.isFilledCell(cell)) {
                 break;
             }
             if (cell) {
@@ -205,10 +205,10 @@ class GeneratedGrid extends Grid {
     generateHints() {
         for (let y = 0; y <= this._size; y += 1) {
             for (let x = 0; x <= this._size; x += 1) {
-                if (!super.isFilledCell(this.cells[y][x])) {
+                if (!Grid.isFilledCell(this.cells[y][x])) {
                     continue;
                 }
-                if (y < this._size && !super.isFilledCell(this.cells[y + 1][x])) {
+                if (y < this._size && !Grid.isFilledCell(this.cells[y + 1][x])) {
                     const digits = this.getColumnDigits(x, y + 1);
                     if (digits.length > 1) {
                         const sum = digits.reduce((sum, d) => sum + d, 0);
@@ -216,7 +216,7 @@ class GeneratedGrid extends Grid {
                     }
 
                 }
-                if (x < this._size && !super.isFilledCell(this.cells[y][x + 1])) {
+                if (x < this._size && !Grid.isFilledCell(this.cells[y][x + 1])) {
                     const digits = this.getRowDigits(x + 1, y);
                     if (digits.length > 1) {
                         const sum = digits.reduce((sum, d) => sum + d, 0);
@@ -234,7 +234,7 @@ class GeneratedGrid extends Grid {
     emptyBlankCells() {
         for (let y = 1; y <= this._size; y += 1) {
             for (let x = 1; x <= this._size; x += 1) {
-                if (super.isFilledCell(this.cells[y][x])) {
+                if (Grid.isFilledCell(this.cells[y][x])) {
                     continue;
                 }
                 this.cells[y][x] = '';
@@ -251,7 +251,7 @@ class GeneratedGrid extends Grid {
             .map((row) => {
                 return row
                     .map((cell) => {
-                        if (super.isFilledCell(cell)) {
+                        if (Grid.isFilledCell(cell)) {
                             if (cell[0] && cell[1]) {
                                 return cell.join('/');
                             } else if (cell[0] && !cell[1]) {
