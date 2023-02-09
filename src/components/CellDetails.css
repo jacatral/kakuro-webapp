@@ -1,0 +1,39 @@
+/* Cell details page */
+.cellDetails .title {
+    font-size: 1.5em;
+}
+
+/* Attributes widget */
+.cellDetails .attributes {
+    min-height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cellDetails .attributes span {
+    margin: 0 auto;
+}
+
+/* Options widget */
+.cellDetails .options {
+    display: flex;
+    flex-direction: row;
+}
+
+.cellDetails .options .option {
+    min-width: 50px;
+    min-height: 50px;
+    margin: 10px auto;
+
+    background-color: #DADD98;
+    border: 1px solid black;
+    border-radius: 4px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cellDetails .options .option.disabled {
+    background-color: #4D5D53;
+    cursor: disab
+}

@@ -3,6 +3,7 @@ import './KakuroController.css';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
+import CellDetails from './CellDetails';
 import GeneratedGrid from '../models/grids/generatedGrid.js';
 import Grid from '../models/grids/grid.js';
 import GridComponent from './grid/Grid.js';
@@ -26,7 +27,34 @@ class KakuroController extends React.Component {
         super(props);
         this.state = {
             cells: props.cells,
+            focusCell: {
+                x: 0,
+                y: 0,
+                value: 0,
+                columnData: { sum: 0, digits: [] },
+                rowData: { sum: 0, digits: [] },
+            }
         };
+    }
+
+    /**
+     * @description Determine additional information regarding the given cell
+     * @param {Number} x
+     * @param {Number} y
+     */
+    setFocusCell(x, y) {
+        const kakuro = new Kakuro(this.state.cells);
+        const columnData = kakuro.retrieveColumnSumData(x, y);
+        const rowData = kakuro.retrieveRowSumData(x, y);
+        this.setState({
+            focusCell: {
+                x: x,
+                y: y,
+                value: this.state.cells[y][x],
+                columnData: columnData,
+                rowData: rowData
+            }
+        });
     }
 
     /**
@@ -61,8 +89,16 @@ class KakuroController extends React.Component {
         return (
             <div class="kakuro">
                 <div class="kakuro-controller">
-                    <GridComponent cells={this.state.cells} updateCellValue={this.updateCellValue.bind(this)} />
+                    <GridComponent
+                        cells={this.state.cells}
+                        setFocusCell={this.setFocusCell.bind(this)}
+                        updateCellValue={this.updateCellValue.bind(this)}
+                    />
                 </div>
+                <CellDetails
+                    focusCell={this.state.focusCell}
+                    updateCellValue={this.updateCellValue.bind(this)}
+                />
                 <input type="button" value="Check Solution" onClick={this.validateSolution.bind(this)}/>
             </div>
         );
