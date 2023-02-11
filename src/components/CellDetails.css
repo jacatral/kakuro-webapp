@@ -32,8 +32,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
+    cursor: pointer;
 }
 .cellDetails .options .option.disabled {
     background-color: #4D5D53;
-    cursor: disab
+    cursor: default;
 }
